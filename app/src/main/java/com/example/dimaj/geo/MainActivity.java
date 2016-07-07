@@ -3,25 +3,26 @@ package com.example.dimaj.geo;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Path;
+import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.dimaj.geo.location.Location;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final String TAG = MainActivity.class.getName();
     private Location loc;
     private TextView text;
-    private ImageView image;
+    private ImageView map;
 
     private ImageView mPointer;
 
@@ -51,13 +52,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int dx = 5;
     private int currentAngle = 0;
 
+    public void updateMap() {
+        android.location.Location location = loc.get();
+        if (location != null) {
+            String textLocation = "Широта=" + location.getLatitude() + "; Долгота=" + location.getLongitude();
+            Log.d("location", textLocation);
+            text.setText(textLocation);
+            String URL = "https://static-maps.yandex.ru/1.x/?ll=" + location.getLongitude() + "," + location.getLatitude()
+                    + "&z=17&size=400,400&l=map";
+            Log.d("location", URL);
+            new DownloadImageTask(map).execute(URL);
+
+
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         text = (TextView) findViewById(R.id.textView);
-        image = (ImageView) findViewById(R.id.imageView);
+        map = (ImageView) findViewById(R.id.map);
         mPointer = (ImageView) findViewById(R.id.arrow);
         text.setText("start");
 
@@ -69,22 +85,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
+        LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
+        layout.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+               updateMap();
+            }
+        });
     }
 
     @Override
     protected void onStart() {
-        android.location.Location location = loc.get();
-        if (location != null) {
-            String textLocation = "Широта=" + location.getLatitude() + "; Долгота=" + location.getLongitude();
-            Log.d("location", textLocation);
-            text.setText(textLocation);
-            String URL = "https://static-maps.yandex.ru/1.x/?ll=" + location.getLongitude() + "," + location.getLatitude()
-                    + "&z=17&size=400,400&l=map";
-            Log.d("location", URL);
-            new DownloadImageTask(image).execute(URL);
 
-
-        }
         super.onStart();
     }
 
@@ -118,7 +131,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         Animation.RELATIVE_TO_SELF,
                         0.5f);
 
-                ra.setDuration(250);
+                ra.setDuration(1000);
+
 
                 ra.setFillAfter(true);
                 mPointer.startAnimation(ra);
@@ -128,6 +142,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    public Bitmap getRoundedShape(Bitmap scaleBitmapImage) {
+        int targetWidth = 400;
+        int targetHeight = 400;
+        Bitmap targetBitmap = Bitmap.createBitmap(targetWidth,
+                targetHeight,Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(targetBitmap);
+        Path path = new Path();
+        path.addCircle(((float) targetWidth - 1) / 2,
+                ((float) targetHeight - 1) / 2,
+                (Math.min(((float) targetWidth),
+                        ((float) targetHeight)) / 2),
+                Path.Direction.CCW);
+
+        canvas.clipPath(path);
+        Bitmap sourceBitmap = scaleBitmapImage;
+        canvas.drawBitmap(sourceBitmap,
+                new Rect(0, 0, sourceBitmap.getWidth(),
+                        sourceBitmap.getHeight()),
+                new Rect(0, 0, targetWidth, targetHeight), null);
+        return targetBitmap;
+    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -168,8 +204,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         protected void onPostExecute(Bitmap result) {
-
-            bmImage.setImageBitmap(result);
+            bmImage.setImageBitmap( getRoundedShape(result));
         }
     }
 }
