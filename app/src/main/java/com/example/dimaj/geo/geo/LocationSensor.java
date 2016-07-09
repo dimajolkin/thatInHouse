@@ -19,8 +19,6 @@ public class LocationSensor {
     private MySensorEventListener manager;
     private MyLocationListener locationListener;
 
-    private PointMap pointMap;
-
     public LocationSensor(SensorManager manager, LocationManager locationManager) {
         this.manager = new MySensorEventListener(manager);
         this.locationListener =  new MyLocationListener(locationManager);
@@ -147,7 +145,7 @@ class MySensorEventListener implements SensorEventListener {
                 currentAngle = azimuthInDegress;
             }
 
-            if (azimuthInDegress - dx > currentAngle || azimuthInDegress + dx < currentAngle) {
+//            if (azimuthInDegress - dx > currentAngle || azimuthInDegress + dx < currentAngle) {
                 currentAngle = azimuthInDegress;
 
                 ra = new RotateAnimation(
@@ -157,17 +155,20 @@ class MySensorEventListener implements SensorEventListener {
                         Animation.RELATIVE_TO_SELF,
                         0.5f);
 
+                ra.setDuration(1000);
+                ra.setFillAfter(true);
+
                 if (onSensor != null) {
                     onSensor.run();
                 }
 
-                ra.setDuration(1000);
-                ra.setFillAfter(true);
 
-            }
+//            }
 
             mCurrentDegree = -azimuthInDegress;
         }
+
+
     }
 
     public int getAngle() {

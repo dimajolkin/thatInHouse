@@ -15,8 +15,10 @@ public class PointMap {
     }
 
     public PointMap(Location location) {
-        this.longitude = (float) location.getLongitude();
-        this.latitude = (float) location.getLatitude();
+        if (location != null) {
+            this.longitude = (float) location.getLongitude();
+            this.latitude = (float) location.getLatitude();
+        }
     }
 
     public float getLatitude() {

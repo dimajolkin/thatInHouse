@@ -2,6 +2,7 @@ package com.example.dimaj.geo;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
@@ -41,22 +42,28 @@ public class MainActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_main);
         text = (TextView) findViewById(R.id.textView);
         map = (ImageView) findViewById(R.id.map);
-        mPointer = (ImageView) findViewById(R.id.arrow);
-        mPointer.setImageResource(R.mipmap.ic_arraw);
+
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
 
-        myLocation = new LocationSensor(
-                (SensorManager) getSystemService(SENSOR_SERVICE),
-                (LocationManager)getSystemService(LOCATION_SERVICE)
-        );
+        if (myLocation == null) {
+            mPointer = (ImageView) findViewById(R.id.arrow);
+            mPointer.setImageResource(R.mipmap.ic_arraw);
 
-        myLocation.onSensor(new Runnable() {
-            @Override
-            public void run() {
-                mPointer.setAnimation(myLocation.getRotateAnimation());
-            }
-        });
+            myLocation = new LocationSensor(
+                    (SensorManager) getSystemService(Context.SENSOR_SERVICE),
+                    (LocationManager)getSystemService(Context.LOCATION_SERVICE)
+            );
+
+            myLocation.onSensor(new Runnable() {
+                @Override
+                public void run() {
+                    mPointer.setAnimation(myLocation.getRotateAnimation());
+                    Log.d(TAG, String.valueOf(myLocation.getAngle()));
+                }
+            });
+        }
+
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
         layout.setOnClickListener(new View.OnClickListener() {
@@ -70,13 +77,17 @@ public class MainActivity extends AppCompatActivity  {
 
     protected void onResume() {
         super.onResume();
-        myLocation.onResume();
+        if (myLocation != null) {
+            myLocation.onResume();
+        }
 
     }
 
     protected void onPause() {
         super.onPause();
-        myLocation.onPause();
+        if (myLocation != null) {
+            myLocation.onPause();
+        }
     }
 
 }
