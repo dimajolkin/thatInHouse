@@ -17,7 +17,7 @@ public class HouseFinder {
     protected int angle = 0;
 
 //    protected final int HOUSE_COLOR = 10653984;
-    protected final int HOUSE_COLOR = -527911;
+    protected final int HOUSE_COLOR = -1252154;
 
     protected MapBitmap map;
 
@@ -53,17 +53,14 @@ public class HouseFinder {
 
         Point center = map.getPointCenter();
 
-
         Log.d("LOG", center.toString());
         Log.d("LOG", String.valueOf(map.getRGB( new Point(2, 2))));
-
-        int HOUSE_COLOR = -1252154;//Color.rgb(234, 226, 197);
 
         int count = 0;
         for (int r = 0; r < 230; r++) {
             Point current = new Point(
                     (int) Math.round(center.x + r * Math.sin(angle * (Math.PI / 180))),
-                    (int) Math.round(center.y + r * Math.sin(angle * (Math.PI / 180)))
+                    (int) Math.round(center.y + r * Math.cos(angle * (Math.PI / 180)))
             );
 
             if (map.getRGB(current) == HOUSE_COLOR) {

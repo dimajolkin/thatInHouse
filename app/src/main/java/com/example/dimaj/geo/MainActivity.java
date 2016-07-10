@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import ru.yandex.yandexmapkit.utils.GeoPoint;
 
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getName();
     private TextView text;
@@ -42,26 +42,24 @@ public class MainActivity extends AppCompatActivity  {
 
 
         Map map = new Map(400, 450);
-        PointMap point = new PointMap(57.7511f, 41.00860f);//myLocation.getMyPointMap();
+        PointMap point = myLocation.getMyPointMap();
         Log.d("LOG", point.toString());
-        String address = map.getAddress(point);
+//        String address = map.getAddress(point);
 //        text.setText(address);
+
         Bitmap bitmap = map.loadMapBitmap(point);
 
         HouseFinder finder = new HouseFinder(bitmap);
-        finder.setAngle(90);
-        finder.getHousesPoints();
-
-
+        finder.setAngle(myLocation.getAngle() - 180);
         ArrayList<Point> points = finder.getHousesPoints();
 
-        for (Point p: points ) {
-            String tmpAddress = map.getAddress(p);
-            Log.d("Location", tmpAddress);
-
-            Toast toast = Toast.makeText(getApplicationContext(), tmpAddress, Toast.LENGTH_SHORT);
-            toast.show();
-        }
+//        for (Point p: points ) {
+//            String tmpAddress = map.getAddress(p);
+//            Log.d("Location", tmpAddress);
+//
+//            Toast toast = Toast.makeText(getApplicationContext(), tmpAddress, Toast.LENGTH_SHORT);
+//            toast.show();
+//        }
 
         this.map.setImageBitmap(finder.getBitmap());
 
@@ -79,22 +77,20 @@ public class MainActivity extends AppCompatActivity  {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
 
-        if (myLocation == null) {
-            mPointer = (ImageView) findViewById(R.id.arrow);
-            mPointer.setImageResource(R.mipmap.ic_arraw);
+        mPointer = (ImageView) findViewById(R.id.arrow);
+        mPointer.setImageResource(R.mipmap.ic_arraw);
 
-            myLocation = new LocationSensor(
-                    (SensorManager) getSystemService(Context.SENSOR_SERVICE),
-                    (LocationManager)getSystemService(Context.LOCATION_SERVICE)
-            );
+        myLocation = new LocationSensor(
+                (SensorManager) getSystemService(Context.SENSOR_SERVICE),
+                (LocationManager) getSystemService(Context.LOCATION_SERVICE)
+        );
 
-            myLocation.onSensor(new Runnable() {
-                @Override
-                public void run() {
-                    mPointer.setAnimation(myLocation.getRotateAnimation());
-                }
-            });
-        }
+        myLocation.onSensor(new Runnable() {
+            @Override
+            public void run() {
+                mPointer.setAnimation(myLocation.getRotateAnimation());
+            }
+        });
 
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.layout);

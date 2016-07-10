@@ -145,7 +145,7 @@ class MySensorEventListener implements SensorEventListener {
                 currentAngle = azimuthInDegress;
             }
 
-//            if (azimuthInDegress - dx > currentAngle || azimuthInDegress + dx < currentAngle) {
+            if (azimuthInDegress - dx > currentAngle || azimuthInDegress + dx < currentAngle) {
                 currentAngle = azimuthInDegress;
 
                 ra = new RotateAnimation(
@@ -162,8 +162,7 @@ class MySensorEventListener implements SensorEventListener {
                     onSensor.run();
                 }
 
-
-//            }
+            }
 
             mCurrentDegree = -azimuthInDegress;
         }
