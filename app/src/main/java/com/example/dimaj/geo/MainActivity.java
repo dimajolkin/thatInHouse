@@ -3,6 +3,8 @@ package com.example.dimaj.geo;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.dimaj.geo.geo.LocationSensor;
@@ -29,9 +32,10 @@ public class MainActivity extends AppCompatActivity  {
     private LocationSensor myLocation;
 
     public void updateMap() {
-        Map map = new Map();
+
+        Map map = new Map(400, 450);
         String address = map.getAddress(myLocation.getMyPointMap());
-        text.setText(address);
+//        text.setText(address);
         this.map.setImageBitmap(map.loadMapBitmap(myLocation.getMyPointMap()));
     }
 
@@ -40,7 +44,7 @@ public class MainActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        text = (TextView) findViewById(R.id.textView);
+//        text = (TextView) findViewById(R.id.textView);
         map = (ImageView) findViewById(R.id.map);
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -59,18 +63,18 @@ public class MainActivity extends AppCompatActivity  {
                 @Override
                 public void run() {
                     mPointer.setAnimation(myLocation.getRotateAnimation());
-                    Log.d(TAG, String.valueOf(myLocation.getAngle()));
                 }
             });
         }
 
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.layout);
         layout.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 updateMap();
+
             }
         });
     }

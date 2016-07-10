@@ -19,10 +19,22 @@ import java.util.Scanner;
 
 public class Map implements MapInterface {
 
+    protected int width = 400;
+    protected int height = 400;
+
+    public Map(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    public Map() {
+
+    }
+
     @Override
     public Bitmap loadMapBitmap(PointMap pointMap) {
         final String URL = "https://static-maps.yandex.ru/1.x/?ll=" + pointMap.getLongitude() + "," + pointMap.getLatitude()
-                + "&z=17&size=400,400&l=map";
+                + "&z=17&size=" + width + "," + height + "&l=map";
 //        Log.d("location", URL);
 
         LoadBitmapRunnable load = new LoadBitmapRunnable(URL);
@@ -63,7 +75,7 @@ public class Map implements MapInterface {
             e.printStackTrace();
         }
 
-        return  "null";
+        return "null";
 //        try {
 //            InputStream in = new java.net.URL(URL).openStream();
 //            String json = new Scanner(in).useDelimiter("\\A").next();
@@ -79,7 +91,6 @@ public class Map implements MapInterface {
 
 //        return "Адресс";
     }
-
 
 
 }

@@ -1,6 +1,7 @@
 package com.example.dimaj.geo;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.JsonReader;
 
 import com.example.dimaj.geo.map.Map;
@@ -26,6 +27,12 @@ public class MapTest {
         Assert.assertEquals(address, "Россия, Кострома, Советская улица, 1");
     }
 
+    @Test
+    public void testMoveIn() {
+
+
+
+    }
 
 
 }
