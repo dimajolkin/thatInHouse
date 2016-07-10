@@ -28,4 +28,9 @@ public class PointMap {
     public float getLongitude() {
         return longitude;
     }
+
+
+    public String toString() {
+        return latitude + "," + longitude;
+    }
 }

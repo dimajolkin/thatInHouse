@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
@@ -16,10 +17,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dimaj.geo.geo.LocationSensor;
+import com.example.dimaj.geo.houses.HouseFinder;
 import com.example.dimaj.geo.map.Map;
 import com.example.dimaj.geo.map.types.PointMap;
+
+import java.util.ArrayList;
+
+import ru.yandex.yandexmapkit.utils.GeoPoint;
 
 
 public class MainActivity extends AppCompatActivity  {
@@ -33,10 +40,32 @@ public class MainActivity extends AppCompatActivity  {
 
     public void updateMap() {
 
+
         Map map = new Map(400, 450);
-        String address = map.getAddress(myLocation.getMyPointMap());
+        PointMap point = new PointMap(57.7511f, 41.00860f);//myLocation.getMyPointMap();
+        Log.d("LOG", point.toString());
+        String address = map.getAddress(point);
 //        text.setText(address);
-        this.map.setImageBitmap(map.loadMapBitmap(myLocation.getMyPointMap()));
+        Bitmap bitmap = map.loadMapBitmap(point);
+
+        HouseFinder finder = new HouseFinder(bitmap);
+        finder.setAngle(90);
+        finder.getHousesPoints();
+
+
+        ArrayList<Point> points = finder.getHousesPoints();
+
+        for (Point p: points ) {
+            String tmpAddress = map.getAddress(p);
+            Log.d("Location", tmpAddress);
+
+            Toast toast = Toast.makeText(getApplicationContext(), tmpAddress, Toast.LENGTH_SHORT);
+            toast.show();
+        }
+
+        this.map.setImageBitmap(finder.getBitmap());
+
+
     }
 
     @SuppressLint("SetTextI18n")

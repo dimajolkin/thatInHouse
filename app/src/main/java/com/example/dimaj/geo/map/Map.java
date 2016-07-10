@@ -2,6 +2,7 @@ package com.example.dimaj.geo.map;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.location.Location;
 import android.util.Log;
 
@@ -35,7 +36,7 @@ public class Map implements MapInterface {
     public Bitmap loadMapBitmap(PointMap pointMap) {
         final String URL = "https://static-maps.yandex.ru/1.x/?ll=" + pointMap.getLongitude() + "," + pointMap.getLatitude()
                 + "&z=17&size=" + width + "," + height + "&l=map";
-//        Log.d("location", URL);
+        Log.d("location", URL);
 
         LoadBitmapRunnable load = new LoadBitmapRunnable(URL);
         Thread thread = new Thread(load);
@@ -47,6 +48,10 @@ public class Map implements MapInterface {
         }
 
         return load.getBitmap();
+    }
+
+    public String getAddress(Point point) {
+        return getAddress(new PointMap(point.x, point.y));
     }
 
     public String getAddress(PointMap point) {
