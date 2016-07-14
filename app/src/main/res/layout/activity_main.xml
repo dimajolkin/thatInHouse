@@ -3,23 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+
     tools:context="com.example.dimaj.geo.MainActivity"
     android:id="@+id/layout">
 
-    <ImageView
+    <ru.yandex.yandexmapkit.MapView
         android:id="@+id/map"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_gravity="center_horizontal"
-        android:src="#c0bfbf"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:scaleType="centerCrop" />
+        android:apiKey="kFz0Mx-ML36iVCUOGxJfw6rwHrlKyLoJGpNdhz3UEN-86aETnDKXxahb3C7xY6ciEeuf0afc82Pu77WdrjvgppbwSkEeQ18QaciFiInfUGE=" />
+    <!--<ImageView-->
+        <!--android:id="@+id/map"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="fill_parent"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:src="#c0bfbf"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:scaleType="centerCrop" />-->
 
     <ImageView
         android:id="@+id/arrow"

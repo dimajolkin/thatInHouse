@@ -7,6 +7,7 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.animation.Animation;
@@ -157,14 +158,13 @@ class MySensorEventListener implements SensorEventListener {
 
                 ra.setDuration(1000);
                 ra.setFillAfter(true);
-
-                if (onSensor != null) {
-                    onSensor.run();
-                }
-
             }
 
             mCurrentDegree = -azimuthInDegress;
+        }
+
+        if (onSensor != null) {
+            onSensor.run();
         }
 
 
