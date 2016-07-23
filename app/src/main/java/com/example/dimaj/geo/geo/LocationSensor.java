@@ -7,7 +7,6 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.animation.Animation;
@@ -17,16 +16,16 @@ import com.example.dimaj.geo.map.types.PointMap;
 
 public class LocationSensor {
 
-    private MySensorEventListener manager;
+    private MySensorEventListener sensorEventListener;
     private MyLocationListener locationListener;
 
     public LocationSensor(SensorManager manager, LocationManager locationManager) {
-        this.manager = new MySensorEventListener(manager);
-        this.locationListener =  new MyLocationListener(locationManager);
+        this.sensorEventListener = new MySensorEventListener(manager);
+        this.locationListener = new MyLocationListener(locationManager);
     }
 
     public int getAngle() {
-        return this.manager.getAngle();
+        return this.sensorEventListener.getAngle();
     }
 
     public PointMap getMyPointMap() {
@@ -34,29 +33,34 @@ public class LocationSensor {
     }
 
     public RotateAnimation getRotateAnimation() {
-        return this.manager.getRotateAnimation();
+        return this.sensorEventListener.getRotateAnimation();
     }
 
     public void onSensor(Runnable onSensor) {
-        this.manager.setOnSensor(onSensor);
+        this.sensorEventListener.setOnSensor(onSensor);
+    }
+
+    public void onStartLocation(Runnable onRunabled) {
+        this.locationListener.onStart(onRunabled);
     }
 
     public void onResume() {
-       this.manager.onResume();
+        this.sensorEventListener.onResume();
     }
 
     public void onPause() {
-        this.manager.onPause();
+        this.sensorEventListener.onPause();
     }
 
 
 }
 
 class MyLocationListener implements LocationListener {
-    private static final String TAG="location";
+    private static final String TAG = "location";
 
     private android.location.Location current;
     private LocationManager lm;
+    private Runnable onStart;
 
     public MyLocationListener(LocationManager lm) {
         this.lm = lm;
@@ -73,6 +77,10 @@ class MyLocationListener implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         if (location != null) {
+            if (onStart != null) {
+                onStart.run();
+            }
+
             current = location;
         }
     }
@@ -80,6 +88,10 @@ class MyLocationListener implements LocationListener {
     public android.location.Location getLocation() {
 
         return current;
+    }
+
+    public void onStart(Runnable onStart) {
+        this.onStart = onStart;
     }
 
     @Override
@@ -123,13 +135,19 @@ class MySensorEventListener implements SensorEventListener {
     private float[] mR = new float[9];
     private float[] mOrientation = new float[3];
     private float mCurrentDegree = 0f;
-    private int dx = 5;
+    private int dx = 0;
     private int currentAngle = 0;
 
     private RotateAnimation ra;
 
     @Override
-    public void onSensorChanged(SensorEvent event) {
+    public  void onSensorChanged(SensorEvent event) {
+        if (dx == 100) {
+            dx = 0;
+            return;
+        }
+        dx++;
+
         if (event.sensor == mAccelerometer) {
             System.arraycopy(event.values, 0, mLastAccelerometer, 0, event.values.length);
             mLastAccelerometerSet = true;
@@ -142,26 +160,22 @@ class MySensorEventListener implements SensorEventListener {
             SensorManager.getOrientation(mR, mOrientation);
             float azimuthInRadians = mOrientation[0];
             int azimuthInDegress = (int) Math.round((Math.toDegrees(azimuthInRadians) + 360) % 360);
-            if (currentAngle == 0) {
-                currentAngle = azimuthInDegress;
-            }
 
-            if (azimuthInDegress - dx > currentAngle || azimuthInDegress + dx < currentAngle) {
-                currentAngle = azimuthInDegress;
+            currentAngle = azimuthInDegress;
 
-                ra = new RotateAnimation(
-                        mCurrentDegree,
-                        -azimuthInDegress,
-                        Animation.RELATIVE_TO_SELF, 0.5f,
-                        Animation.RELATIVE_TO_SELF,
-                        0.5f);
+            ra = new RotateAnimation(
+                    mCurrentDegree,
+                    -azimuthInDegress,
+                    Animation.RELATIVE_TO_SELF, 0.5f,
+                    Animation.RELATIVE_TO_SELF,
+                    0.5f);
 
-                ra.setDuration(1000);
-                ra.setFillAfter(true);
-            }
+            ra.setDuration(3000);
+            ra.setFillAfter(true);
 
             mCurrentDegree = -azimuthInDegress;
         }
+
 
         if (onSensor != null) {
             onSensor.run();
@@ -174,10 +188,13 @@ class MySensorEventListener implements SensorEventListener {
         return this.currentAngle;
     }
 
-
-    public void onResume() {
+    public void start() {
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
         mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_GAME);
+    }
+
+    public void onResume() {
+      start();
     }
 
     public void onPause() {

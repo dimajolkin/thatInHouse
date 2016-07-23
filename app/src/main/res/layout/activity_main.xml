@@ -1,36 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
     android:layout_width="match_parent"
+
     android:layout_height="match_parent"
+    tools:context="com.example.dimaj.geo.MainActivity">
 
-    tools:context="com.example.dimaj.geo.MainActivity"
-    android:id="@+id/layout">
 
-    <ru.yandex.yandexmapkit.MapView
+    <ImageView
         android:id="@+id/map"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:apiKey="kFz0Mx-ML36iVCUOGxJfw6rwHrlKyLoJGpNdhz3UEN-86aETnDKXxahb3C7xY6ciEeuf0afc82Pu77WdrjvgppbwSkEeQ18QaciFiInfUGE=" />
-    <!--<ImageView-->
-        <!--android:id="@+id/map"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="fill_parent"-->
-        <!--android:layout_gravity="center_horizontal"-->
-        <!--android:src="#c0bfbf"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:layout_alignParentStart="true"-->
-        <!--android:scaleType="centerCrop" />-->
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <ImageView
         android:id="@+id/arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_gravity="center"
-        android:background="@mipmap/ic_arraw"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_gravity="center"
+        android:background="@mipmap/ic_arraw" />
+
 
 </RelativeLayout>

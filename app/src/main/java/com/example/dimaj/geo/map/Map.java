@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.location.Location;
+import android.nfc.Tag;
 import android.util.Log;
 
 import com.example.dimaj.geo.images.LoadBitmapRunnable;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Map implements MapInterface {
@@ -23,19 +25,53 @@ public class Map implements MapInterface {
     protected int width = 400;
     protected int height = 400;
 
+    private ArrayList<PointMap> points;
+
     public Map(int width, int height) {
         this.width = width;
         this.height = height;
+        points = new ArrayList<>();
     }
 
     public Map() {
 
     }
 
+    public void addLabel(PointMap point) {
+        points.add(point);
+    }
+    public void clearLabel() {
+        points.clear();
+    }
+
+    public PointMap geGlobal(PointMap center, Point pixel) {
+        float[] d = new float[]{
+                0.0000057359385294830645f,
+                0.000010728836073781167f
+        };
+
+        float p[] = new float[]{
+                center.getLatitude() + width / 2 * d[0],
+                center.getLongitude() - height / 2 * d[1]
+        };
+
+        return new PointMap(
+                (p[0] - d[0] * pixel.y),
+                (p[1] + d[1] * pixel.x)
+        );
+    }
+
+
+
     @Override
     public Bitmap loadMapBitmap(PointMap pointMap) {
-        final String URL = "https://static-maps.yandex.ru/1.x/?ll=" + pointMap.getLongitude() + "," + pointMap.getLatitude()
+        String URL = "https://static-maps.yandex.ru/1.x/?ll=" + pointMap.getLongitude() + "," + pointMap.getLatitude()
                 + "&z=17&size=" + width + "," + height + "&l=map";
+
+        for (PointMap p: points) {
+            URL = URL + "&pt="+p.getLongitude()+","+p.getLatitude()+",pmwtm1";
+        }
+
         Log.d("location", URL);
 
         LoadBitmapRunnable load = new LoadBitmapRunnable(URL);
@@ -77,6 +113,7 @@ public class Map implements MapInterface {
 
             return geoObj.getString("text");
         } catch (JSONException e) {
+            Log.d("Error YandexGeo: ", point.toString() );
             e.printStackTrace();
         }
 

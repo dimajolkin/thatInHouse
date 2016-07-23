@@ -39,111 +39,103 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getName();
     private TextView text;
-    private MapView map;
+    private ImageView map;
     private MapController mMapController;
     private ImageView arrow;
 
     private LocationSensor myLocation;
 
+    private static Map yandexMap = new Map(400, 450);
+
     public void updateMap() {
+        PointMap point = myLocation.getMyPointMap();
+        Log.d("LOG", point.toString());
+        Bitmap bitmap = yandexMap.loadMapBitmap(point);
 
-//        Map map = new Map(400, 450);
-//        PointMap point = myLocation.getMyPointMap();
-//        Log.d("LOG", point.toString());
-////        String address = map.getAddress(point);
-////        text.setText(address);
-//
-//        Bitmap bitmap = map.loadMapBitmap(point);
-//
-//        HouseFinder finder = new HouseFinder(bitmap);
-//        finder.setAngle(myLocation.getAngle() - 180);
-//        ArrayList<Point> points = finder.getHousesPoints();
-//
-//        for (Point p: points ) {
-////            String tmpAddress = map.getAddress(p);
-//            Log.d("Location: ", p.toString());
-//
-////            Toast toast = Toast.makeText(getApplicationContext(), tmpAddress, Toast.LENGTH_SHORT);
-////            toast.show();
-//        }
-//
-//        this.map.setImageBitmap(finder.getBitmap());
+        HouseFinder finder = new HouseFinder(bitmap);
+        finder.setAngle(myLocation.getAngle() - 180);
+        ArrayList<Point> points = finder.getHousesPoints();
 
+        for (Point p: points ) {
+            PointMap globalPoint = yandexMap.geGlobal(point, p);
+            String tmpAddress = yandexMap.getAddress(globalPoint);
+            Log.d("Location: ", tmpAddress);
+            Log.d("pixel  Location: ", p.toString());
+            Log.d("global Location: ", globalPoint.toString());
 
+//            Toast toast = Toast.makeText(getApplicationContext(), tmpAddress, Toast.LENGTH_SHORT);
+//            toast.show();
+        }
+
+        this.map.setImageBitmap(finder.getBitmap());
     }
 
+    public void initCompas() {
+
+        myLocation = new LocationSensor(
+                (SensorManager) getSystemService(Context.SENSOR_SERVICE),
+                (LocationManager) getSystemService(Context.LOCATION_SERVICE)
+        );
+
+        myLocation.onSensor(new Runnable() {
+
+            @Override
+            public void run() {
+//                int f = myLocation.getAngle();
+//                Log.d(TAG, String.valueOf(f));
+                arrow.setAnimation(myLocation.getRotateAnimation());
+            }
+        });
+
+        myLocation.onStartLocation(new Runnable() {
+            @Override
+            public void run() {
+                updateMap();
+            }
+        });
+
+        myLocation.onResume();
+    }
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         arrow = (ImageView) findViewById(R.id.arrow);
+        map = (ImageView) findViewById(R.id.map);
 
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.ACCESS_FINE_LOCATION
         }, 1);
 
-        map = (MapView) findViewById(R.id.map);
-        mMapController = map.getMapController();
-
-        GeoPoint geoPoint = mMapController.getMapCenter(); //получает географические координаты центра карты
-        OverlayItem overlayItem = new OverlayItem(geoPoint, null); // необходимо для получения недоступного экземпляра класса cp,  представляет внутренние координаты центра карты библиотеки
-        mMapController.getMapRotator().a(overlayItem.getPoint()); //задаем точку относительно которой производится вращение
-
-        mMapController.setEnabled(false);
-        mMapController.setZoomCurrent(17);
-        mMapController.getOverlayManager().getMyLocation().addMyLocationListener(new OnMyLocationListener() {
-            @Override
-            public void onMyLocationChange(MyLocationItem myLocationItem) {
-                myLocation = new LocationSensor(
-                        (SensorManager) getSystemService(Context.SENSOR_SERVICE),
-                        (LocationManager) getSystemService(Context.LOCATION_SERVICE)
-                );
-                myLocation.onResume();
-
-            }
-        });
-
+        initCompas();
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.layout);
         layout.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-//                updateMap();
-//                PointMap location = myLocation.getMyPointMap();
-//                mMapController.setPositionAnimationTo(new GeoPoint(location.getLatitude(), location.getLongitude()));
-
-
+                updateMap();
             }
         });
 
-        myLocation.onSensor(new Runnable() {
-            int old = -1;
-            @Override
-            public synchronized void run() {
-                int f = myLocation.getAngle();
-                if (old != f) {
-                    old = f;
-                    arrow.setAnimation(myLocation.getRotateAnimation());
-                }
-            }
-        });
+
     }
 
     protected void onResume() {
         super.onResume();
-        if (myLocation != null) {
-            myLocation.onResume();
-        }
+//        if (myLocation != null) {
+//            myLocation.onResume();
+//        }
 
     }
 
     protected void onPause() {
         super.onPause();
-        if (myLocation != null) {
-            myLocation.onPause();
-        }
+//        if (myLocation != null) {
+//            myLocation.onPause();
+//        }
     }
 
 }
