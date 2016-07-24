@@ -2,6 +2,7 @@ package com.example.dimaj.geo;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -12,6 +13,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static Map yandexMap = new Map(400, 450);
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void updateMap() {
 
         if (location.getPoint() == null) {
@@ -68,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("pixel  Location: ", p.toString());
             Log.d("global Location: ", globalPoint.toString());
         }
-
+        this.map.setBackground(null);
         this.map.setImageBitmap(getCroppedBitmap(finder.getBitmap()));
     }
 
