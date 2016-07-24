@@ -37,7 +37,7 @@ public class HouseFinder {
     }
 
     public void setAngle(int angle) {
-        this.angle = angle;
+        this.angle = angle - 180;
     }
 
     public void setMaxLook(int maxLook) {
