@@ -56,8 +56,8 @@ public class Map implements MapInterface {
         };
 
         return new PointMap(
-                (p[0] - d[0] * pixel.y),
-                (p[1] + d[1] * pixel.x)
+                (p[0] - d[0] * (pixel.y - 15)),
+                (p[1] + d[1] * (pixel.x + 15))
         );
     }
 

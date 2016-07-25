@@ -3,6 +3,7 @@ package com.example.dimaj.geo.houses;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.util.Log;
 
@@ -12,6 +13,26 @@ public class MapBitmap {
 
     public MapBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
+    }
+
+
+    public static Bitmap rotate(Bitmap b, int degrees) {
+        if (degrees != 0 && b != null) {
+            Matrix m = new Matrix();
+
+            m.setRotate(degrees, (float) b.getWidth() / 2, (float) b.getHeight() / 2);
+            try {
+                Bitmap b2 = Bitmap.createBitmap(
+                        b, 0, 0, b.getWidth(), b.getHeight(), m, true);
+                if (b != b2) {
+                    b.recycle();
+                    b = b2;
+                }
+            } catch (OutOfMemoryError ex) {
+                throw ex;
+            }
+        }
+        return b;
     }
 
     public void flip(Point p, int replaseColor, int color) {

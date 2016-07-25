@@ -37,7 +37,12 @@ public class HouseFinder {
     }
 
     public void setAngle(int angle) {
-        this.angle = angle - 180;
+        this.angle = angle;
+    }
+
+    public void rotate(int angle)
+    {
+        this.map = new MapBitmap(MapBitmap.rotate(map.getBitmap(), angle));
     }
 
     public void setMaxLook(int maxLook) {

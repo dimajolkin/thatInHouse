@@ -56,15 +56,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Bitmap bitmap = yandexMap.loadMapBitmap(location.getPoint());
-
         HouseFinder finder = new HouseFinder(bitmap);
-        finder.setAngle((int) compass.getAngle());
+
+        finder.setAngle(180  + (int) compass.getAngle());
+
+        Log.d("ANGLE" , String.valueOf(compass.getAngle()));
+//        finder.rotate((int) compass.getAngle());
 
         ArrayList<Point> points = finder.getHousesPoints();
 
         for (Point p : points) {
             PointMap globalPoint = yandexMap.geGlobal(location.getPoint(), p);
             String tmpAddress = yandexMap.getAddress(globalPoint);
+
             housesListView.add(tmpAddress);
 
             Log.d("Location: ", tmpAddress);
@@ -127,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         arrow = (ImageView) findViewById(R.id.arrow);
 
         compass = new Compass((SensorManager) getSystemService(SENSOR_SERVICE));
-        compass.setImage(arrow);
+        compass.setImage(map);
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
         layout.setOnClickListener(new View.OnClickListener() {
